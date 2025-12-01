@@ -13,10 +13,11 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println("part 1: ", rotate(50, lines))
+	fmt.Println("part 1: ", rotate(50, lines, true))
+	fmt.Println("part 2: ", rotate(50, lines, false))
 }
 
-func rotate(startPos int, steps []string) int {
+func rotate(startPos int, steps []string, endPositionOnly bool) int {
 	atZeroCounter := 0
 	currentPos := startPos
 
@@ -28,16 +29,20 @@ func rotate(startPos int, steps []string) int {
 
 		switch step[0:1] {
 		case "L":
-			currentPos = calculateNewPosition(currentPos, -amount)
+			amount = -amount
 		case "R":
-			currentPos = calculateNewPosition(currentPos, amount)
+			// amount is positive
 		default:
 			panic("unknown direction")
 		}
 
-		fmt.Printf("moved %s%d to %d\n", step[0:1], amount, currentPos)
+		if !endPositionOnly {
+			atZeroCounter += allPositionsInBetweenMatchingZero(currentPos, amount)
+		}
 
-		if currentPos == 0 {
+		currentPos = calculateNewPosition(currentPos, amount)
+
+		if endPositionOnly && currentPos == 0 {
 			atZeroCounter++
 		}
 	}
@@ -52,4 +57,27 @@ func calculateNewPosition(currentPos int, amount int) int {
 	}
 
 	return newPosition
+}
+
+func allPositionsInBetweenMatchingZero(currentPos int, amount int) int {
+	atZeroCounter := 0
+
+	if amount > 0 {
+		for i := 1; i <= amount; i++ {
+			pos := calculateNewPosition(currentPos, i)
+			if pos == 0 {
+				atZeroCounter++
+			}
+		}
+	}
+	if amount < 0 {
+		for i := -1; i >= amount; i-- {
+			pos := calculateNewPosition(currentPos, i)
+			if pos == 0 {
+				atZeroCounter++
+			}
+		}
+	}
+
+	return atZeroCounter
 }
