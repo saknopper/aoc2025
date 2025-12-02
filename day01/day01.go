@@ -27,10 +27,10 @@ func rotate(startPos int, steps []string, endPositionOnly bool) int {
 			panic(err)
 		}
 
-		switch step[0:1] {
-		case "L":
+		switch step[0] {
+		case 'L':
 			amount = -amount
-		case "R":
+		case 'R':
 			// amount is positive
 		default:
 			panic("unknown direction")
@@ -53,7 +53,7 @@ func rotate(startPos int, steps []string, endPositionOnly bool) int {
 func calculateNewPosition(currentPos int, amount int) int {
 	newPosition := (currentPos + amount) % 100
 	if newPosition < 0 {
-		return 100 + newPosition
+		newPosition += 100
 	}
 
 	return newPosition
